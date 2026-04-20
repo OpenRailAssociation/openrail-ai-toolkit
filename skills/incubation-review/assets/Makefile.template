@@ -56,4 +56,5 @@ pdf:
 		--metadata title="$(TITLE)" \
 		--metadata date="$(DATE)" \
 		-f markdown-citations \
+		--lua-filter=$(TEMPLATE_DIR)/auto-columns.lua \
 		-o $(OUT)/report.pdf
