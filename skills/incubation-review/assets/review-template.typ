@@ -1,5 +1,4 @@
 // OpenRail Incubation Review — Typst template
-// Ported from the WWCND report design language (XeLaTeX)
 // Used via: pandoc report.md --pdf-engine=typst --template=this-file.typ -o report.pdf
 
 // ── Colour palette ──────────────────────────────────────────────────────────
@@ -7,16 +6,13 @@
 #let midnavy = rgb("#1A3A5C")
 #let accent = rgb("#2E6DA4")
 #let accentlt = rgb("#EEF4FB")
-#let passgreen = rgb("#1A6B35")
 #let passbg = rgb("#EAF4EE")
-#let failred = rgb("#AA2222")
-#let failbg = rgb("#FAEEEE")
+#let passgreen = rgb("#1A6B35")
 #let warncolor = rgb("#8B6914")
 #let warnbg = rgb("#FDF6E3")
 #let rulegray = rgb("#CCCCCC")
 #let bodygray = rgb("#444444")
 #let dimgray = rgb("#888888")
-#let rowalt = rgb("#F6F8FC")
 
 #let conf(
   title: none,
@@ -24,7 +20,7 @@
   abstract: none,
   lang: "en",
   region: "US",
-  margin: (x: 2.8cm, y: 2.4cm),
+  margin: (x: 2cm, y: 2cm),
   papersize: "a4",
   cols: 1,
   doc,
@@ -34,8 +30,8 @@
     paper: papersize,
     margin: margin,
     header: context {
-      if counter(page).get().first() > 1 {
-        set text(8pt, fill: dimgray, font: "Helvetica Neue", weight: "light")
+      if counter(page).get().first() > 2 {
+        set text(8pt, fill: dimgray, weight: "light")
         title
         h(1fr)
         [OpenRail Incubation Review]
@@ -44,35 +40,37 @@
       }
     },
     footer: context {
-      set text(8pt, fill: dimgray, font: "Helvetica Neue", weight: "light")
-      h(1fr)
-      counter(page).display("1 / 1", both: true)
+      if counter(page).get().first() > 1 {
+        set text(8pt, fill: dimgray, weight: "light")
+        h(1fr)
+        counter(page).display("1 / 1", both: true)
+      }
     },
   )
 
   // ── Typography ──────────────────────────────────────────────────────────
-  set text(font: "Helvetica Neue", size: 10.5pt, fill: bodygray, lang: lang, region: region)
-  show raw: set text(font: "Menlo", size: 8.5pt)
-  set par(leading: 0.65em, justify: true)
+  set text(font: "Helvetica Neue", size: 10pt, fill: bodygray, lang: lang, region: region)
+  show raw: set text(font: "Menlo", size: 8pt)
+  set par(leading: 0.6em, justify: true)
 
   // ── Headings ────────────────────────────────────────────────────────────
   show heading.where(level: 1): it => {
-    set text(16pt, weight: "bold", fill: midnavy, font: "Georgia")
-    v(12pt)
+    set text(15pt, weight: "bold", fill: midnavy)
+    v(14pt)
     it
     v(2pt)
     line(length: 100%, stroke: 0.4pt + rulegray)
-    v(6pt)
-  }
-  show heading.where(level: 2): it => {
-    set text(13pt, weight: "bold", fill: midnavy, font: "Georgia")
-    v(10pt)
-    it
     v(4pt)
   }
+  show heading.where(level: 2): it => {
+    set text(12pt, weight: "bold", fill: midnavy)
+    v(10pt)
+    it
+    v(3pt)
+  }
   show heading.where(level: 3): it => {
-    set text(11pt, weight: "bold", fill: navy)
-    v(8pt)
+    set text(10.5pt, weight: "bold", fill: navy)
+    v(6pt)
     it
     v(2pt)
   }
@@ -85,17 +83,18 @@
 
   // ── Tables ──────────────────────────────────────────────────────────────
   set table(
-    inset: (x: 8pt, y: 5pt),
+    inset: (x: 6pt, y: 4pt),
     stroke: (x: none, y: 0.5pt + rulegray),
+    align: left,
   )
-  show table.cell.where(y: 0): set text(weight: "bold", size: 9.5pt, fill: midnavy)
+  show table.cell.where(y: 0): set text(weight: "bold", size: 9pt, fill: midnavy)
 
   // ── Code blocks ─────────────────────────────────────────────────────────
   show raw.where(block: true): it => {
-    set text(size: 8pt)
+    set text(size: 7.5pt)
     block(
       fill: rgb("#F6F8FC"),
-      inset: 10pt,
+      inset: 8pt,
       radius: 3pt,
       width: 100%,
       stroke: 0.5pt + rulegray,
@@ -104,20 +103,31 @@
   }
 
   // ── Lists ───────────────────────────────────────────────────────────────
-  set list(indent: 1.2em, body-indent: 0.5em)
-  set enum(indent: 1.2em, body-indent: 0.5em)
+  set list(indent: 1em, body-indent: 0.4em)
+  set enum(indent: 1em, body-indent: 0.4em)
 
-  // ── Title block ─────────────────────────────────────────────────────────
+  // ── Page breaks before appendices: handled via raw typst blocks in markdown ──
+
+  // ── Highlight "Overall assessment" section ──────────────────────────────
+  // (handled via pandoc div or manually in the body)
+
+  // ── Title page ──────────────────────────────────────────────────────────
   if title != none {
-    v(1cm)
-    text(24pt, weight: "bold", fill: navy, font: "Georgia")[#title]
-    v(4pt)
-    if date != none {
-      text(11pt, fill: dimgray, weight: "light")[#date]
-    }
-    v(8pt)
-    line(length: 100%, stroke: 1pt + accent)
+    set page(margin: (x: 2cm, y: 2cm), header: none, footer: none)
+    v(3cm)
+    line(length: 100%, stroke: 1.5pt + accent)
     v(12pt)
+    text(10pt, fill: dimgray, weight: "light", tracking: 0.15em)[OPENRAIL INCUBATION REVIEW]
+    v(8pt)
+    text(28pt, weight: "bold", fill: navy)[#title]
+    v(8pt)
+    if date != none {
+      text(12pt, fill: dimgray, weight: "light")[#date]
+    }
+    v(12pt)
+    line(length: 100%, stroke: 1.5pt + accent)
+    v(2cm)
+    pagebreak()
   }
 
   doc
@@ -126,9 +136,9 @@
 // ── Pandoc template glue ──────────────────────────────────────────────────
 
 #let horizontalrule = {
-  v(8pt)
+  v(6pt)
   line(start: (25%, 0%), end: (75%, 0%), stroke: 0.4pt + rgb("#CCCCCC"))
-  v(8pt)
+  v(6pt)
 }
 
 #show terms: it => {
