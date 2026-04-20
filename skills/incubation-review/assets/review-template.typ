@@ -87,7 +87,9 @@
     stroke: (x: none, y: 0.5pt + rulegray),
     align: left,
   )
+  show table.cell: set text(size: 9.5pt)
   show table.cell.where(y: 0): set text(weight: "bold", size: 9pt, fill: midnavy)
+  show table: set align(left)
 
   // ── Code blocks ─────────────────────────────────────────────────────────
   show raw.where(block: true): it => {
@@ -114,19 +116,30 @@
   // ── Title page ──────────────────────────────────────────────────────────
   if title != none {
     set page(margin: (x: 2cm, y: 2cm), header: none, footer: none)
-    v(3cm)
+    v(2.5cm)
     line(length: 100%, stroke: 1.5pt + accent)
-    v(12pt)
+    v(10pt)
     text(10pt, fill: dimgray, weight: "light", tracking: 0.15em)[OPENRAIL INCUBATION REVIEW]
-    v(8pt)
+    v(6pt)
     text(28pt, weight: "bold", fill: navy)[#title]
-    v(8pt)
+    v(6pt)
     if date != none {
-      text(12pt, fill: dimgray, weight: "light")[#date]
+      text(11pt, fill: dimgray, weight: "light")[Report date: #date]
     }
-    v(12pt)
+    v(10pt)
     line(length: 100%, stroke: 1.5pt + accent)
-    v(2cm)
+    v(1.5cm)
+
+    // Table of contents
+    text(12pt, weight: "bold", fill: midnavy)[Contents]
+    v(4pt)
+    line(length: 100%, stroke: 0.4pt + rulegray)
+    v(4pt)
+    {
+      set text(size: 9.5pt, fill: bodygray)
+      outline(title: none, indent: 1.2em, depth: 2)
+    }
+
     pagebreak()
   }
 
