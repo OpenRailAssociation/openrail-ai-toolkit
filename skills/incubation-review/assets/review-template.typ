@@ -1,5 +1,22 @@
 // OpenRail Incubation Review — Typst template
+// Ported from the WWCND report design language (XeLaTeX)
 // Used via: pandoc report.md --pdf-engine=typst --template=this-file.typ -o report.pdf
+
+// ── Colour palette ──────────────────────────────────────────────────────────
+#let navy = rgb("#0D2137")
+#let midnavy = rgb("#1A3A5C")
+#let accent = rgb("#2E6DA4")
+#let accentlt = rgb("#EEF4FB")
+#let passgreen = rgb("#1A6B35")
+#let passbg = rgb("#EAF4EE")
+#let failred = rgb("#AA2222")
+#let failbg = rgb("#FAEEEE")
+#let warncolor = rgb("#8B6914")
+#let warnbg = rgb("#FDF6E3")
+#let rulegray = rgb("#CCCCCC")
+#let bodygray = rgb("#444444")
+#let dimgray = rgb("#888888")
+#let rowalt = rgb("#F6F8FC")
 
 #let conf(
   title: none,
@@ -7,7 +24,7 @@
   abstract: none,
   lang: "en",
   region: "US",
-  margin: (x: 2.5cm, y: 2.5cm),
+  margin: (x: 2.8cm, y: 2.4cm),
   papersize: "a4",
   cols: 1,
   doc,
@@ -17,87 +34,102 @@
     paper: papersize,
     margin: margin,
     header: context {
-      if counter(page).get().first() > 1 [
-        #set text(8pt, fill: luma(120))
-        #title
-        #h(1fr)
-        OpenRail Incubation Review
-      ]
+      if counter(page).get().first() > 1 {
+        set text(8pt, fill: dimgray, font: "Helvetica Neue", weight: "light")
+        title
+        h(1fr)
+        [OpenRail Incubation Review]
+        v(-4pt)
+        line(length: 100%, stroke: 0.4pt + rulegray)
+      }
     },
     footer: context {
-      set text(8pt, fill: luma(120))
+      set text(8pt, fill: dimgray, font: "Helvetica Neue", weight: "light")
       h(1fr)
       counter(page).display("1 / 1", both: true)
     },
   )
 
-  set text(font: "Helvetica Neue", size: 10pt, lang: lang, region: region)
+  // ── Typography ──────────────────────────────────────────────────────────
+  set text(font: "Helvetica Neue", size: 10.5pt, fill: bodygray, lang: lang, region: region)
   show raw: set text(font: "Menlo", size: 8.5pt)
+  set par(leading: 0.65em, justify: true)
 
-  set heading(numbering: none)
+  // ── Headings ────────────────────────────────────────────────────────────
   show heading.where(level: 1): it => {
-    set text(16pt, weight: "bold")
-    v(0.3em)
+    set text(16pt, weight: "bold", fill: midnavy, font: "Georgia")
+    v(12pt)
     it
-    v(0.2em)
+    v(2pt)
+    line(length: 100%, stroke: 0.4pt + rulegray)
+    v(6pt)
   }
   show heading.where(level: 2): it => {
-    set text(13pt, weight: "bold")
-    v(0.3em)
+    set text(13pt, weight: "bold", fill: midnavy, font: "Georgia")
+    v(10pt)
     it
-    v(0.1em)
+    v(4pt)
   }
   show heading.where(level: 3): it => {
-    set text(11pt, weight: "bold")
-    v(0.2em)
+    set text(11pt, weight: "bold", fill: navy)
+    v(8pt)
     it
-    v(0.1em)
+    v(2pt)
   }
 
+  // ── Links ───────────────────────────────────────────────────────────────
   show link: it => {
-    set text(fill: rgb("#1a5fb4"))
+    set text(fill: accent)
     underline(it)
   }
 
+  // ── Tables ──────────────────────────────────────────────────────────────
   set table(
-    inset: 6pt,
-    stroke: 0.5pt + luma(180),
+    inset: (x: 8pt, y: 5pt),
+    stroke: (x: none, y: 0.5pt + rulegray),
   )
-  show table.cell.where(y: 0): set text(weight: "bold", size: 9pt)
+  show table.cell.where(y: 0): set text(weight: "bold", size: 9.5pt, fill: midnavy)
 
+  // ── Code blocks ─────────────────────────────────────────────────────────
   show raw.where(block: true): it => {
     set text(size: 8pt)
     block(
-      fill: luma(245),
-      inset: 8pt,
+      fill: rgb("#F6F8FC"),
+      inset: 10pt,
       radius: 3pt,
       width: 100%,
+      stroke: 0.5pt + rulegray,
       it,
     )
   }
 
-  set par(leading: 0.65em, justify: true)
+  // ── Lists ───────────────────────────────────────────────────────────────
+  set list(indent: 1.2em, body-indent: 0.5em)
+  set enum(indent: 1.2em, body-indent: 0.5em)
 
-  // Title block
+  // ── Title block ─────────────────────────────────────────────────────────
   if title != none {
-    align(left)[
-      #text(20pt, weight: "bold")[#title]
-      #if date != none {
-        v(-0.3em)
-        text(10pt, fill: luma(100))[#date]
-      }
-    ]
-    v(0.5em)
-    line(length: 100%, stroke: 0.5pt + luma(180))
-    v(0.5em)
+    v(1cm)
+    text(24pt, weight: "bold", fill: navy, font: "Georgia")[#title]
+    v(4pt)
+    if date != none {
+      text(11pt, fill: dimgray, weight: "light")[#date]
+    }
+    v(8pt)
+    line(length: 100%, stroke: 1pt + accent)
+    v(12pt)
   }
 
   doc
 }
 
-// Pandoc template glue below
+// ── Pandoc template glue ──────────────────────────────────────────────────
 
-#let horizontalrule = line(start: (25%,0%), end: (75%,0%))
+#let horizontalrule = {
+  v(8pt)
+  line(start: (25%, 0%), end: (75%, 0%), stroke: 0.4pt + rgb("#CCCCCC"))
+  v(8pt)
+}
 
 #show terms: it => {
   it.children
