@@ -99,13 +99,12 @@
   show table.cell: set text(size: 9.5pt)
   show table.cell.where(y: 0): set text(weight: "bold", size: 9pt, fill: midnavy)
   show table: it => {
-    set align(left)
+    set align(center)
     v(12pt)
-    block(
-      stroke: (top: 1.5pt + midnavy, bottom: 1.5pt + midnavy),
-      width: 100%,
-      it,
-    )
+    {
+      set align(left)
+      it
+    }
     v(12pt)
   }
 
