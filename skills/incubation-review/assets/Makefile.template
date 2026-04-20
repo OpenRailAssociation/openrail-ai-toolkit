@@ -1,0 +1,48 @@
+# Incubation Review Makefile
+# Generated from openrail-ai-toolkit/skills/incubation-review
+#
+# Usage: make <target>
+# Run from the review workspace directory.
+
+REPO_DIR ?= $(error Set REPO_DIR to the path of the checked-out repository)
+REPO_URL ?= $(error Set REPO_URL to the GitHub repository URL)
+OUT := $(CURDIR)
+
+.PHONY: all reuse gitleaks scorecard sbom licensing grype clean setup
+
+all: reuse gitleaks scorecard sbom licensing grype
+
+# --- Setup ---
+
+setup:
+	mkdir -p $(OUT)/reuse $(OUT)/gitleaks $(OUT)/scorecard $(OUT)/sbom $(OUT)/grype $(OUT)/licensing
+
+# --- Individual tools ---
+
+reuse: setup
+	cd $(REPO_DIR) && reuse lint > $(OUT)/reuse/lint.txt 2>&1 || true
+	@echo "Done: reuse → reuse/lint.txt"
+
+gitleaks: setup
+	cd $(REPO_DIR) && gitleaks detect --no-banner -f json -r $(OUT)/gitleaks/findings.json 2>$(OUT)/gitleaks/run.log || true
+	@echo "Done: gitleaks → gitleaks/findings.json"
+
+scorecard: setup
+	scorecard --repo=$(REPO_URL) --format=json > $(OUT)/scorecard/results.json 2>$(OUT)/scorecard/run.log || true
+	@echo "Done: scorecard → scorecard/results.json"
+
+sbom: setup
+	cd $(REPO_DIR) && compliance-assistant sbom generate -g syft -d . -o $(OUT)/sbom/sbom.json 2>$(OUT)/sbom/generate.log
+	compliance-assistant sbom enrich -f $(OUT)/sbom/sbom.json -o $(OUT)/sbom/sbom-enriched.json 2>$(OUT)/sbom/enrich.log
+	@echo "Done: sbom → sbom/sbom.json, sbom/sbom-enriched.json"
+
+licensing: sbom
+	compliance-assistant licensing list -f $(OUT)/sbom/sbom-enriched.json -o plain --no-simplify > $(OUT)/licensing/licenses.txt 2>$(OUT)/licensing/run.log || true
+	@echo "Done: licensing → licensing/licenses.txt"
+
+grype: sbom
+	grype --add-cpes-if-none sbom:$(OUT)/sbom/sbom-enriched.json > $(OUT)/grype/vulnerabilities.txt 2>$(OUT)/grype/run.log || true
+	@echo "Done: grype → grype/vulnerabilities.txt"
+
+clean:
+	rm -rf reuse/ gitleaks/ scorecard/ sbom/ grype/ licensing/
