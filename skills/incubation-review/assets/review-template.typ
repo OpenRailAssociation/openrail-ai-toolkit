@@ -16,6 +16,7 @@
 
 #let conf(
   title: none,
+  subtitle: none,
   date: none,
   abstract: none,
   lang: "en",
@@ -30,7 +31,7 @@
     paper: papersize,
     margin: margin,
     header: context {
-      if counter(page).get().first() > 2 {
+      if counter(page).get().first() > 1 {
         set text(8pt, fill: dimgray, weight: "light")
         title
         h(1fr)
@@ -54,21 +55,28 @@
   set par(leading: 0.6em, justify: true)
 
   // ── Headings ────────────────────────────────────────────────────────────
-  show heading.where(level: 1): it => {
+  let chapter-count = counter("chapters")
+  show heading.where(level: 2): it => {
+    chapter-count.step()
+    context {
+      if chapter-count.get().first() > 1 {
+        pagebreak(weak: true)
+      }
+    }
     set text(15pt, weight: "bold", fill: midnavy)
-    v(14pt)
+    v(4pt)
     it
     v(2pt)
     line(length: 100%, stroke: 0.4pt + rulegray)
     v(4pt)
   }
-  show heading.where(level: 2): it => {
+  show heading.where(level: 3): it => {
     set text(12pt, weight: "bold", fill: midnavy)
     v(10pt)
     it
     v(3pt)
   }
-  show heading.where(level: 3): it => {
+  show heading.where(level: 4): it => {
     set text(10.5pt, weight: "bold", fill: navy)
     v(6pt)
     it
@@ -83,13 +91,23 @@
 
   // ── Tables ──────────────────────────────────────────────────────────────
   set table(
-    inset: (x: 6pt, y: 4pt),
-    stroke: (x: none, y: 0.5pt + rulegray),
+    inset: (x: 8pt, y: 5pt),
+    stroke: none,
     align: left,
+    fill: (_, y) => if y == 0 { accentlt } else if calc.even(y) { rgb("#F6F8FC") } else { none },
   )
   show table.cell: set text(size: 9.5pt)
   show table.cell.where(y: 0): set text(weight: "bold", size: 9pt, fill: midnavy)
-  show table: set align(left)
+  show table: it => {
+    set align(left)
+    v(12pt)
+    block(
+      stroke: (top: 1.5pt + midnavy, bottom: 1.5pt + midnavy),
+      width: 100%,
+      it,
+    )
+    v(12pt)
+  }
 
   // ── Code blocks ─────────────────────────────────────────────────────────
   show raw.where(block: true): it => {
@@ -115,20 +133,23 @@
 
   // ── Title page ──────────────────────────────────────────────────────────
   if title != none {
-    set page(margin: (x: 2cm, y: 2cm), header: none, footer: none)
-    v(2.5cm)
+    v(2cm)
     line(length: 100%, stroke: 1.5pt + accent)
-    v(10pt)
+    v(8pt)
     text(10pt, fill: dimgray, weight: "light", tracking: 0.15em)[OPENRAIL INCUBATION REVIEW]
     v(6pt)
     text(28pt, weight: "bold", fill: navy)[#title]
     v(6pt)
+    if subtitle != none {
+      text(11pt, fill: bodygray)[#subtitle]
+      v(6pt)
+    }
     if date != none {
       text(11pt, fill: dimgray, weight: "light")[Report date: #date]
     }
-    v(10pt)
+    v(8pt)
     line(length: 100%, stroke: 1.5pt + accent)
-    v(1.5cm)
+    v(0.8cm)
 
     // Table of contents
     text(12pt, weight: "bold", fill: midnavy)[Contents]
@@ -140,7 +161,9 @@
       outline(title: none, indent: 1.2em, depth: 2)
     }
 
-    pagebreak()
+    v(0.5cm)
+    line(length: 100%, stroke: 0.4pt + rulegray)
+    v(0.5cm)
   }
 
   doc
@@ -183,6 +206,9 @@ $endfor$
 #show: doc => conf(
 $if(title)$
   title: [$title$],
+$endif$
+$if(subtitle)$
+  subtitle: [$subtitle$],
 $endif$
 $if(date)$
   date: [$date$],
