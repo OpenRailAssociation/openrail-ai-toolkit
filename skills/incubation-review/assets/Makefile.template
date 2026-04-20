@@ -6,9 +6,11 @@
 
 REPO_DIR ?= $(error Set REPO_DIR to the path of the checked-out repository)
 REPO_URL ?= $(error Set REPO_URL to the GitHub repository URL)
+REPORT ?= $(error Set REPORT to the path of the review report Markdown file)
+TEMPLATE_DIR ?= $(error Set TEMPLATE_DIR to the path of the incubation-review skill assets)
 OUT := $(CURDIR)
 
-.PHONY: all reuse gitleaks scorecard sbom licensing grype clean setup
+.PHONY: all reuse gitleaks scorecard sbom licensing grype pdf clean setup
 
 all: reuse gitleaks scorecard sbom licensing grype
 
@@ -45,4 +47,13 @@ grype: sbom
 	@echo "Done: grype → grype/vulnerabilities.txt"
 
 clean:
-	rm -rf reuse/ gitleaks/ scorecard/ sbom/ grype/ licensing/
+	rm -rf reuse/ gitleaks/ scorecard/ sbom/ grype/ licensing/ report.pdf
+
+pdf:
+	pandoc $(REPORT) \
+		--pdf-engine=typst \
+		--template=$(TEMPLATE_DIR)/review-template.typ \
+		--metadata title="$(TITLE)" \
+		--metadata date="$(DATE)" \
+		-f markdown-citations \
+		-o $(OUT)/report.pdf
