@@ -31,29 +31,41 @@ setup:
 # --- Individual tools ---
 
 reuse: setup
-	$(RUN) sh -c 'cd $(REPO_DIR) && reuse lint' > $(OUT)/reuse/lint.txt 2>&1 || true
-	@echo "Done: reuse → reuse/lint.txt"
+	@echo "[1/6] reuse lint — starting (~10s)..."
+	@START=$$(date +%s); \
+	$(RUN) sh -c 'cd $(REPO_DIR) && reuse lint' > $(OUT)/reuse/lint.txt 2>&1 || true; \
+	echo "       done ($$(($$(date +%s) - $$START))s)"
 
 gitleaks: setup
-	$(RUN) sh -c 'cd $(REPO_DIR) && gitleaks detect --no-banner -f json -r $(OUT)/gitleaks/findings.json' 2>$(OUT)/gitleaks/run.log || true
-	@echo "Done: gitleaks → gitleaks/findings.json"
+	@echo "[2/6] gitleaks — starting (~10-30s depending on repo size)..."
+	@START=$$(date +%s); \
+	$(RUN) sh -c 'cd $(REPO_DIR) && gitleaks detect --no-banner -f json -r $(OUT)/gitleaks/findings.json' 2>$(OUT)/gitleaks/run.log || true; \
+	echo "       done ($$(($$(date +%s) - $$START))s)"
 
 scorecard: setup
-	$(RUN) scorecard --repo=$(REPO_URL) --format=json > $(OUT)/scorecard/results.json 2>$(OUT)/scorecard/run.log || true
-	@echo "Done: scorecard → scorecard/results.json"
+	@echo "[3/6] scorecard — starting (~30-60s, requires GITHUB_TOKEN)..."
+	@START=$$(date +%s); \
+	$(RUN) scorecard --repo=$(REPO_URL) --format=json > $(OUT)/scorecard/results.json 2>$(OUT)/scorecard/run.log || true; \
+	echo "       done ($$(($$(date +%s) - $$START))s)"
 
 sbom: setup
-	$(RUN) sh -c 'cd $(REPO_DIR) && compliance-assistant sbom generate -g syft -d . -o $(OUT)/sbom/sbom.json' 2>$(OUT)/sbom/generate.log
-	$(RUN) compliance-assistant sbom enrich -f $(OUT)/sbom/sbom.json -o $(OUT)/sbom/sbom-enriched.json 2>$(OUT)/sbom/enrich.log || true
-	@echo "Done: sbom → sbom/sbom.json, sbom/sbom-enriched.json"
+	@echo "[4/6] sbom generate + enrich — starting (~30-90s, network-dependent)..."
+	@START=$$(date +%s); \
+	$(RUN) sh -c 'cd $(REPO_DIR) && compliance-assistant sbom generate -g syft -d . -o $(OUT)/sbom/sbom.json' 2>$(OUT)/sbom/generate.log; \
+	$(RUN) compliance-assistant sbom enrich -f $(OUT)/sbom/sbom.json -o $(OUT)/sbom/sbom-enriched.json 2>$(OUT)/sbom/enrich.log || true; \
+	echo "       done ($$(($$(date +%s) - $$START))s)"
 
 licensing: sbom
-	$(RUN) compliance-assistant licensing list -f $(OUT)/sbom/sbom-enriched.json -o plain --no-simplify > $(OUT)/licensing/licenses.txt 2>$(OUT)/licensing/run.log || true
-	@echo "Done: licensing → licensing/licenses.txt"
+	@echo "[5/6] licensing — starting (~5-10s)..."
+	@START=$$(date +%s); \
+	$(RUN) compliance-assistant licensing list -f $(OUT)/sbom/sbom-enriched.json -o plain --no-simplify > $(OUT)/licensing/licenses.txt 2>$(OUT)/licensing/run.log || true; \
+	echo "       done ($$(($$(date +%s) - $$START))s)"
 
 grype: sbom
-	$(RUN) grype --add-cpes-if-none sbom:$(OUT)/sbom/sbom-enriched.json > $(OUT)/grype/vulnerabilities.txt 2>$(OUT)/grype/run.log || true
-	@echo "Done: grype → grype/vulnerabilities.txt"
+	@echo "[6/6] grype — starting (~10-30s, first run downloads DB)..."
+	@START=$$(date +%s); \
+	$(RUN) grype --add-cpes-if-none sbom:$(OUT)/sbom/sbom-enriched.json > $(OUT)/grype/vulnerabilities.txt 2>$(OUT)/grype/run.log || true; \
+	echo "       done ($$(($$(date +%s) - $$START))s)"
 
 clean:
 	rm -rf reuse/ gitleaks/ scorecard/ sbom/ grype/ licensing/ report.pdf
