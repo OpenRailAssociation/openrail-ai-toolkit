@@ -122,7 +122,11 @@ No tools required beyond git and standard shell.
       - Do they set constraints (e.g. mandatory type hints, specific test patterns)?
       - Or are they generic boilerplate with no project-specific content?
     - Multiple agent config files (e.g. both Copilot and Amazon Q) suggest the team actively uses AI tooling and has thought about guardrails
-    - Note which agents are configured — this is interesting context for the TC
+    - Check commit messages for AI co-authorship signals:
+      - `git log --all --format='%b' | grep -iE 'Co-authored-by:.*\b(claude|copilot|cursor|codeium|amazon.q|gemini|openai|chatgpt)\b'`
+      - `git log --all --format='%b' | grep -iE 'Assisted-by:'`
+      - Claude Code adds `Co-authored-by: Claude <noreply@anthropic.com>` by default; other tools may use `Assisted-by:` trailers
+    - Report what you find — this is informational context for the TC, not a positive or negative signal
 
 #### Tier 2 — Automated tooling
 
