@@ -107,7 +107,22 @@ No tools required beyond git and standard shell.
 7. **Code structure** — organization, separation of concerns, obvious red flags
 8. **Test presence** — do test directories/files exist? rough coverage sense
 9. **Documentation quality** — beyond README: inline docs, architecture docs, API docs
-10. **Community signals** — commit history shape (total commits, time span, contributors), stars/forks, issue/PR activity
+10. **Issue and PR activity** — not just counts, but movement:
+    - `gh issue list --repo <url> --state all --json state --jq 'group_by(.state) | map({state: .[0].state, count: length})'`
+    - Are issues being closed or just accumulating? Check ratio of open to closed.
+    - Are there recent issues (last 3 months)? Stale issue trackers signal abandoned projects.
+    - Any external contributors in issues/PRs, or only the core team?
+    - Labels, milestones, project boards — signs of organized planning vs. ad-hoc tracking
+11. **Commit history shape** — total commits, time span (first to last), contributors, stars/forks
+12. **AI-assisted development** — check for agent configuration files and assess their quality:
+    - Known files: `.github/copilot-instructions.md` (GitHub Copilot), `.amazonq/rules/` (Amazon Q), `CLAUDE.md` (Claude Code), `.cursor/rules/` (Cursor), `.agents/skills/` (Agent Skills standard)
+    - Presence alone is not enough. Read the files and assess:
+      - Do they define coding standards (formatting, type checking, testing)?
+      - Do they describe the architecture and project structure?
+      - Do they set constraints (e.g. mandatory type hints, specific test patterns)?
+      - Or are they generic boilerplate with no project-specific content?
+    - Multiple agent config files (e.g. both Copilot and Amazon Q) suggest the team actively uses AI tooling and has thought about guardrails
+    - Note which agents are configured — this is interesting context for the TC
 
 #### Tier 2 — Automated tooling
 
