@@ -26,6 +26,24 @@ Criteria for each stage of the OpenRail incubation process. Source: `docs/incuba
 | 8 | DCO enforced | Commit sign-offs, CI checks |
 | 9 | Security best practices | Pinned deps, dep update automation, Scorecard ≥ 5/10, SECURITY.md |
 
+### Stage 2 inspection notes: governance and roadmap
+
+Criteria 4 and 5 require deeper inspection than checking for file existence:
+
+**Open governance (criterion 4):**
+- Read GOVERNANCE.md — does it describe how decisions are actually taken, or is it a template?
+- How are committers and maintainers added? Is the process documented and has it been used?
+- Are decisions visible? Look for: public meeting notes, decision records (ADRs), discussion in issues/PRs
+- Communication channels: are they listed and active? Can an outsider find where to participate?
+
+**Public business roadmap (criterion 5):**
+- Is there a roadmap document or GitHub project board?
+- Is it actively maintained or a stale snapshot of internal planning? Check last update date.
+- Does it reflect actual development activity? Compare roadmap items to recent commits/PRs.
+- GitHub Projects: `gh project list --owner <org>` — are there project boards linked to the repo?
+- Milestones: `gh api repos/<owner>/<repo>/milestones` — are they used and current?
+- Is the roadmap driven by external input (issues, community requests) or purely internal?
+
 ## Stage 3 (Adopted)
 
 | # | Criterion | Check |
