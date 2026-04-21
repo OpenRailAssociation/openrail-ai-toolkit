@@ -66,6 +66,8 @@ make all            # Run all tools
 
 Each target writes output to its own directory. Targets are independent except where noted (licensing and grype depend on sbom). Failed tools do not block others.
 
+Tools can hang (see `references/tools.md` for known failure modes). The Makefile uses timeouts. When running via an agent: run tools one at a time, verify each produced output before moving on, and skip with a note if a tool times out or fails.
+
 ## Review workflow
 
 ### 1. Fetch the application

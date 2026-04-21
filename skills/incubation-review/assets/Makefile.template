@@ -3,11 +3,20 @@
 #
 # Usage: make <target>
 # Run from the review workspace directory.
+#
+# Each tool has a timeout (default 120s). Override with TIMEOUT=<seconds>.
+# On macOS, requires gtimeout (brew install coreutils).
 
 REPO_DIR ?= $(error Set REPO_DIR to the path of the checked-out repository)
 REPO_URL ?= $(error Set REPO_URL to the GitHub repository URL)
 REPORT ?= $(error Set REPORT to the path of the review report Markdown file)
 TEMPLATE_DIR ?= $(error Set TEMPLATE_DIR to the path of the incubation-review skill assets)
+OUT := $(CURDIR)
+TIMEOUT := 120
+TIMER := $(shell command -v gtimeout 2>/dev/null || command -v timeout 2>/dev/null || echo "")
+
+# If no timeout command available, run without timeout
+RUN := $(if $(TIMER),$(TIMER) $(TIMEOUT),)
 OUT := $(CURDIR)
 
 .PHONY: all reuse gitleaks scorecard sbom licensing grype pdf clean setup
@@ -22,28 +31,28 @@ setup:
 # --- Individual tools ---
 
 reuse: setup
-	cd $(REPO_DIR) && reuse lint > $(OUT)/reuse/lint.txt 2>&1 || true
+	$(RUN) sh -c 'cd $(REPO_DIR) && reuse lint' > $(OUT)/reuse/lint.txt 2>&1 || true
 	@echo "Done: reuse → reuse/lint.txt"
 
 gitleaks: setup
-	cd $(REPO_DIR) && gitleaks detect --no-banner -f json -r $(OUT)/gitleaks/findings.json 2>$(OUT)/gitleaks/run.log || true
+	$(RUN) sh -c 'cd $(REPO_DIR) && gitleaks detect --no-banner -f json -r $(OUT)/gitleaks/findings.json' 2>$(OUT)/gitleaks/run.log || true
 	@echo "Done: gitleaks → gitleaks/findings.json"
 
 scorecard: setup
-	scorecard --repo=$(REPO_URL) --format=json > $(OUT)/scorecard/results.json 2>$(OUT)/scorecard/run.log || true
+	$(RUN) scorecard --repo=$(REPO_URL) --format=json > $(OUT)/scorecard/results.json 2>$(OUT)/scorecard/run.log || true
 	@echo "Done: scorecard → scorecard/results.json"
 
 sbom: setup
-	cd $(REPO_DIR) && compliance-assistant sbom generate -g syft -d . -o $(OUT)/sbom/sbom.json 2>$(OUT)/sbom/generate.log
-	compliance-assistant sbom enrich -f $(OUT)/sbom/sbom.json -o $(OUT)/sbom/sbom-enriched.json 2>$(OUT)/sbom/enrich.log
+	$(RUN) sh -c 'cd $(REPO_DIR) && compliance-assistant sbom generate -g syft -d . -o $(OUT)/sbom/sbom.json' 2>$(OUT)/sbom/generate.log
+	$(RUN) compliance-assistant sbom enrich -f $(OUT)/sbom/sbom.json -o $(OUT)/sbom/sbom-enriched.json 2>$(OUT)/sbom/enrich.log || true
 	@echo "Done: sbom → sbom/sbom.json, sbom/sbom-enriched.json"
 
 licensing: sbom
-	compliance-assistant licensing list -f $(OUT)/sbom/sbom-enriched.json -o plain --no-simplify > $(OUT)/licensing/licenses.txt 2>$(OUT)/licensing/run.log || true
+	$(RUN) compliance-assistant licensing list -f $(OUT)/sbom/sbom-enriched.json -o plain --no-simplify > $(OUT)/licensing/licenses.txt 2>$(OUT)/licensing/run.log || true
 	@echo "Done: licensing → licensing/licenses.txt"
 
 grype: sbom
-	grype --add-cpes-if-none sbom:$(OUT)/sbom/sbom-enriched.json > $(OUT)/grype/vulnerabilities.txt 2>$(OUT)/grype/run.log || true
+	$(RUN) grype --add-cpes-if-none sbom:$(OUT)/sbom/sbom-enriched.json > $(OUT)/grype/vulnerabilities.txt 2>$(OUT)/grype/run.log || true
 	@echo "Done: grype → grype/vulnerabilities.txt"
 
 clean:
