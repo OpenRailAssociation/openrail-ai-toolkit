@@ -4,7 +4,7 @@ description: >
   Use when reviewing an OpenRail incubation application. Handles setting up a review workspace,
   running license scans, vulnerability scans, secrets detection, REUSE compliance checks,
   and producing a structured review report against OpenRail stage criteria.
-license: MIT
+license: Apache-2.0
 tags:
   - openrail
   - incubation
