@@ -10,6 +10,18 @@ A structured procedure for reviewing project applications to the OpenRail incuba
 
 See [`skills/incubation-review/SKILL.md`](skills/incubation-review/SKILL.md) for the full documentation.
 
+### Archive Playground Repo Skill
+
+Add an archive notice to a repo's README in the OpenRail-Playground organization and open a PR announcing the repo will be archived in one week.
+
+See [`skills/archive-playground-repo/SKILL.md`](skills/archive-playground-repo/SKILL.md) for the full documentation.
+
+### Archive Check Skill
+
+Check for open archive PRs that have passed the one-week notice period, then archive the repos or provide URLs for manual archiving.
+
+See [`skills/archive-check/SKILL.md`](skills/archive-check/SKILL.md) for the full documentation.
+
 ## Status
 
 This is an experimental administrative project of the OpenRail Association. Its scope and contents may change as we learn what works well for AI-assisted workflows in the OpenRail context.
