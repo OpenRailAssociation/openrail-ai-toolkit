@@ -13,7 +13,7 @@ tags:
 
 # Archive Playground Repo
 
-Prepend an archive notice to a repository's README and open a pull request. The PR serves as the one-week notice before the repo is actually archived.
+Clone a repository locally, prepend an archive notice to its README, push a branch, and open a pull request. The PR serves as the one-week notice before the repo is actually archived.
 
 ## Prerequisites
 
@@ -74,41 +74,30 @@ This repository is no longer actively maintained. It will be archived in one wee
 
 3. **Present messages for review.** Show the user all four messages (from the templates above), filled in with the repo name if applicable. Wait for approval or edits before proceeding.
 
-4. **Get the default branch SHA.** Use the default branch name from step 1:
+4. **Clone the repo.** Propose a clone location and ask the user to confirm or provide an alternative.
 
    ```
-   gh api repos/OpenRail-Playground/<repo>/git/refs/heads/<default-branch> --jq '.object.sha'
+   git clone git@github.com:OpenRail-Playground/<repo>.git <clone-path>
    ```
 
-5. **Create the branch.**
+5. **Create the branch and prepend the notice.**
 
    ```
-   gh api repos/OpenRail-Playground/<repo>/git/refs \
-     -f ref=refs/heads/archive-notice \
-     -f sha=<sha-from-step-4>
+   cd <clone-path>
+   git checkout -b archive-notice
    ```
 
-6. **Get the current README.** Fetch content and SHA (needed for the update):
+   Prepend the approved README notice followed by a blank line to the existing `README.md`. Use standard file operations (no base64, no API).
+
+6. **Commit and push.**
 
    ```
-   gh api repos/OpenRail-Playground/<repo>/contents/README.md --jq '{sha: .sha, content: .content}'
+   git add README.md
+   git commit -m "<approved commit message>"
+   git push -u origin archive-notice
    ```
 
-   Base64-decode the content.
-
-7. **Prepend the archive notice.** Prepend the approved README notice followed by a blank line to the existing content. Base64-encode the result.
-
-8. **Push the updated README to the branch.**
-
-   ```
-   gh api repos/OpenRail-Playground/<repo>/contents/README.md -X PUT \
-     -f message="<approved commit message>" \
-     -f content=<base64-encoded-new-content> \
-     -f sha=<file-sha-from-step-6> \
-     -f branch=archive-notice
-   ```
-
-9. **Open the pull request.**
+7. **Open the pull request.**
 
    ```
    gh pr create \
@@ -118,10 +107,11 @@ This repository is no longer actively maintained. It will be archived in one wee
      --body "<approved PR body>"
    ```
 
-10. **Report.** Confirm the PR URL to the user.
+8. **Report.** Confirm the PR URL to the user. The clone remains at the chosen location for inspection.
 
 ## Constraints
 
 - Do not merge the PR — it stays open as the notice period.
 - The README notice is about the repo's state for visitors, not about the archiving process.
 - One repo per invocation. Run the skill multiple times for multiple repos.
+- The agent pushes the branch (exception to the no-push rule) because the edit is mechanical and the PR is the review artifact.
