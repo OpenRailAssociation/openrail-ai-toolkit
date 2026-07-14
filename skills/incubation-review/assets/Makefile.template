@@ -45,6 +45,7 @@ gitleaks: setup
 scorecard: setup
 	@echo "[3/6] scorecard — starting (~30-60s, requires GITHUB_TOKEN)..."
 	@START=$$(date +%s); \
+	GITHUB_TOKEN=$${GITHUB_TOKEN:-$$(gh auth token 2>/dev/null)} \
 	$(RUN) scorecard --repo=$(REPO_URL) --format=json > $(OUT)/scorecard/results.json 2>$(OUT)/scorecard/run.log || true; \
 	echo "       done ($$(($$(date +%s) - $$START))s)"
 

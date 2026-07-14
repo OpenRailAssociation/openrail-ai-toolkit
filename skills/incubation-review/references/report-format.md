@@ -4,13 +4,14 @@ The review report is a single cohesive document. Structure:
 
 ## Title and header
 
+- **Disclaimer** (first line, italicized): state that this is an AI-assisted review and name the person who ran it. Example: *This review was conducted with AI assistance (Kiro) by Cornelius Schumacher, OpenRail Technical Committee.*
 - Title: `<Project> — Stage <N> Review`
 - Header block: PR link, applicant, repo link, date
 - Opening line: mention OpenRail and link to the specific stage criteria page (e.g. `https://openrailassociation.org/tech/incubation/process/#stage-1-onboarded`)
 
 ## Project summary
 
-Brief description of what the project does, tech stack, license, production usage.
+Brief description of what the project does, primary programming language, tech stack, license, production usage. If the project publishes to package registries (crates.io, PyPI, NuGet, npm, etc.), list them with URLs.
 
 ## Project vitals (in Repository inspection section)
 

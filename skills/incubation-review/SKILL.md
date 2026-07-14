@@ -104,17 +104,19 @@ No tools required beyond git and standard shell.
    - `git grep -iE "(password|secret|api.?key|token)\s*[:=]"` (exclude test fixtures, templates, docs)
 5. **Hardcoded values** — URLs, IPs, credentials in config or code
 6. **Tech stack verification** — compare actual languages/frameworks to questionnaire claims
-7. **Code structure** — organization, separation of concerns, obvious red flags
-8. **Test presence** — do test directories/files exist? rough coverage sense
-9. **Documentation quality** — beyond README: inline docs, architecture docs, API docs
-10. **Issue and PR activity** — not just counts, but movement:
+7. **Copyright holder** — is the copyright holder explicitly stated? Check LICENSE file (filled-in template vs. placeholder), SPDX headers, `publiccode.yml` legal section, Cargo.toml/package.json authors. If unstated, flag as an open question for the applicant.
+8. **Package registries** — if the project publishes packages (crates.io, PyPI, NuGet, npm, Maven Central, etc.), note the package names and URLs. Check CI workflows for publishing steps.
+9. **Code structure** — organization, separation of concerns, obvious red flags
+10. **Test presence** — do test directories/files exist? rough coverage sense
+11. **Documentation quality** — beyond README: inline docs, architecture docs, API docs. Check if the questionnaire source is maintained in the repo itself.
+12. **Issue and PR activity** — not just counts, but movement:
     - `gh issue list --repo <url> --state all --json state --jq 'group_by(.state) | map({state: .[0].state, count: length})'`
     - Are issues being closed or just accumulating? Check ratio of open to closed.
     - Are there recent issues (last 3 months)? Stale issue trackers signal abandoned projects.
     - Any external contributors in issues/PRs, or only the core team?
     - Labels, milestones, project boards — signs of organized planning vs. ad-hoc tracking
-11. **Commit history shape** — total commits, time span (first to last), contributors, stars/forks
-12. **AI-assisted development** — check for agent configuration files and assess their quality:
+13. **Commit history shape** — total commits, time span (first to last), contributors, stars/forks
+14. **AI-assisted development** — check for agent configuration files and assess their quality:
     - Known files: `.github/copilot-instructions.md` (GitHub Copilot), `.amazonq/rules/` (Amazon Q), `CLAUDE.md` (Claude Code), `.cursor/rules/` (Cursor), `.agents/skills/` (Agent Skills standard)
     - Presence alone is not enough. Read the files and assess:
       - Do they define coding standards (formatting, type checking, testing)?
