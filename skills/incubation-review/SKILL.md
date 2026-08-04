@@ -78,6 +78,8 @@ gh pr diff <number> --repo OpenRailAssociation/technical-committee
 
 Read the filled-out questionnaire from the PR diff.
 
+**Pre-application review:** When no PR has been submitted yet, look for a draft questionnaire in the repo itself (often in `docs/`). If found, add a "Questionnaire review" section to the report (see `references/report-format.md`). The review proceeds identically otherwise — evaluate against the same stage criteria using the draft questionnaire and repo content as evidence.
+
 ### 2. Evaluate stage criteria
 
 For each criterion of the target stage (see `references/stage-criteria.md`):
@@ -97,6 +99,7 @@ No tools required beyond git and standard shell.
 1. **Required community files** — per TC project templates:
    - LICENSE, README.md, CODE_OF_CONDUCT.md, CONTRIBUTING.md, MAINTAINERS.md, GOVERNANCE.md
    - SECURITY.md (required for Stage 2+)
+   - When these files exist, compare their content against the TC project templates (`project-templates/` in the technical-committee repo) and note specific gaps: missing sections, wrong enforcement contact, missing DCO mention, missing MVG attribution, missing agreement statement in MAINTAINERS.
 2. **Tree overview** — directory structure, language breakdown, file count
 3. **License grep** — manual search per TC license review guide:
    - `git grep -i "licen[s|c]e"` / `git grep -iE "copy(right|left)"` / `git grep -i "public domain"`
@@ -104,11 +107,11 @@ No tools required beyond git and standard shell.
    - `git grep -iE "(password|secret|api.?key|token)\s*[:=]"` (exclude test fixtures, templates, docs)
 5. **Hardcoded values** — URLs, IPs, credentials in config or code
 6. **Tech stack verification** — compare actual languages/frameworks to questionnaire claims
-7. **Copyright holder** — is the copyright holder explicitly stated? Check LICENSE file (filled-in template vs. placeholder), SPDX headers, `publiccode.yml` legal section, Cargo.toml/package.json authors. If unstated, flag as an open question for the applicant.
+7. **Copyright holder** — is the copyright holder explicitly stated? Check LICENSE file (filled-in template vs. placeholder), SPDX headers, `publiccode.yml` legal section, Cargo.toml/package.json authors. If unstated, flag as an open question for the applicant. OpenRail uses distributed copyright: copyright belongs to the employers of contributors, not to OpenRail Association. If the LICENSE file has the Apache 2.0 appendix filled in at the bottom (the "How to apply" boilerplate with a copyright line), note that this is the per-file header template, not meant for the LICENSE file itself.
 8. **Package registries** — if the project publishes packages (crates.io, PyPI, NuGet, npm, Maven Central, etc.), note the package names and URLs. Check CI workflows for publishing steps.
 9. **Code structure** — organization, separation of concerns, obvious red flags
 10. **Test presence** — do test directories/files exist? rough coverage sense
-11. **Documentation quality** — beyond README: inline docs, architecture docs, API docs. Check if the questionnaire source is maintained in the repo itself.
+11. **Documentation quality** — beyond README: inline docs, architecture docs, API docs. Check if the questionnaire source is maintained in the repo itself. When a project has ADRs, arc42, or other structured architecture documentation, read them and summarize their content in the review (they reveal the depth of architectural thinking). For standard/specification projects where documentation is the primary deliverable, this section carries more weight than code structure.
 12. **Issue and PR activity** — not just counts, but movement:
     - `gh issue list --repo <url> --state all --json state --jq 'group_by(.state) | map({state: .[0].state, count: length})'`
     - Are issues being closed or just accumulating? Check ratio of open to closed.
