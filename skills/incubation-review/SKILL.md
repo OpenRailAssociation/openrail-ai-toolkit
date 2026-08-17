@@ -150,6 +150,22 @@ Run from the review workspace via `make <target>`. Each tool writes to its own d
 
 Follow the report format in `references/report-format.md`. The report is a single cohesive document, not a chronological investigation log.
 
+### 5. Generate PDF
+
+Render the report to PDF using pandoc with the typst engine, the review template, and the auto-columns lua filter (both in this skill's `assets/` directory):
+
+```
+pandoc report.md \
+  -o report.pdf \
+  --pdf-engine=typst \
+  --template=<path-to-this-skill>/assets/review-template.typ \
+  --lua-filter=<path-to-this-skill>/assets/auto-columns.lua \
+  -V title="<Project> — Stage <N> Review" \
+  -V date="<YYYY-MM-DD>"
+```
+
+The template provides: title page with table of contents, styled headings, alternating-row tables, headers/footers with page numbers. The lua filter removes explicit column widths so typst can auto-size tables.
+
 ## Rules
 
 - Stage 1 barrier is intentionally low — don't block on nice-to-haves
