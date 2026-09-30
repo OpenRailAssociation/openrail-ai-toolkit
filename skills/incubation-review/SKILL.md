@@ -34,7 +34,7 @@ make -f <path-to-this-skill>/assets/Makefile.template setup \
   REVIEW_DIR=~/openrail-src/REVIEWS/<project-name>
 ```
 
-This clones the repo to `~/openrail-src/<org>/<repo>` and creates the review workspace at `~/openrail-src/REVIEWS/<project-name>/` with per-tool output directories and a Makefile.
+This clones the repo to `~/openrail-src/<org>/<repo>` (idempotently — skips if already present) and scaffolds the review workspace at `~/openrail-src/REVIEWS/<project-name>/` with per-tool output directories, a copy of the Makefile, and a README stub. Run the tools afterwards from the workspace, passing `REPO_DIR=~/openrail-src/<org>/<repo>` (the setup output prints the exact path).
 
 ## Workspace structure
 
@@ -132,6 +132,10 @@ No tools required beyond git and standard shell.
       - `git log --all --format='%b' | grep -iE 'Assisted-by:'`
       - Claude Code adds `Co-authored-by: Claude <noreply@anthropic.com>` by default; other tools may use `Assisted-by:` trailers
     - Report what you find — this is informational context for the TC, not a positive or negative signal
+15. **Internationalization readiness** — informational, not a Stage 1 criterion, but relevant to OpenRail's European base. Assess two layers separately:
+    - **Domain data — locale-neutral?** If the project follows an international standard or handles regional data, check the implementation honours that breadth rather than baking in the developer's own locale: timezones validated against the full IANA set (e.g. `Intl.supportedValuesOf('timeZone')`) not a fixed list; currency and units driven by the data + a standard like ISO 4217 not a hardcoded default; dates in a locale-neutral or standard-native format not a regional one like `MM/DD/YYYY` or `DD.MM.YYYY`; text handled as UTF-8. Note any region-specific helpers (national-holiday calendars, local unit conventions) but treat them as additive conveniences, not blockers.
+    - **UI localizable?** `git grep -ilE "i18n|useTranslation|gettext"` and look for locale files / a `t()` function vs. hardcoded English. If the underlying data format carries its own translations (e.g. a `translations` table), does the project *apply* them to displayed labels or only store and export them?
+    - Report as regionally capable (data works) vs. internationalized (UI localizable) — often very different. A source of good-first-contribution suggestions, not pass/fail.
 
 #### Tier 2 — Automated tooling
 
