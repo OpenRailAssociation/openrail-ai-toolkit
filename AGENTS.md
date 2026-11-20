@@ -7,6 +7,7 @@ AI toolkit for OpenRail Association work. Contains skills for recurring operatio
 | Skill | When to use |
 |---|---|
 | `skills/incubation-review/SKILL.md` | Reviewing a project application to the OpenRail incubation process |
+| `skills/project-onboarding/SKILL.md` | Onboarding a project after the board accepted it, or checking the status of an onboarding issue |
 | `skills/archive-playground-repo/SKILL.md` | User asks to archive a repo in OpenRail-Playground (opens a notice PR; does NOT immediately archive) |
 | `skills/archive-check/SKILL.md` | Checking whether any archive notice PRs have passed the one-week waiting period and are ready to finalize |
 

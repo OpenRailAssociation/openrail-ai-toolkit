@@ -10,6 +10,12 @@ A structured procedure for reviewing project applications to the OpenRail incuba
 
 See [`skills/incubation-review/SKILL.md`](skills/incubation-review/SKILL.md) for the full documentation.
 
+### Project Onboarding Skill
+
+Check the onboarding of a newly accepted project against the actual state of the technical-committee, openrail-org-config, and website repos, and prepare the missing changes as local branches.
+
+See [`skills/project-onboarding/SKILL.md`](skills/project-onboarding/SKILL.md) for the full documentation.
+
 ### Archive Playground Repo Skill
 
 Add an archive notice to a repo's README in the OpenRail-Playground organization and open a PR announcing the repo will be archived in one week.
